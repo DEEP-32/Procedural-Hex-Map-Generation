@@ -3,11 +3,20 @@ using UnityEngine;
 
 public class HexGrid : MonoBehaviour
 {
-
-    public int width = 6;
-    public int height = 6;
+    [SerializeField] int width = 6;
+    [SerializeField] int height = 6;
+    public int Width { get => width; private set => width = value; }
+    public int Height { get => height; private set => height = value; }
 
     public HexCell cellPrefab;
+
+    [SerializeField] Color defaultColor = Color.white;
+
+    public Color DefautColor
+    {
+        get => defaultColor;
+        private set => defaultColor = value;
+    }
 
 
     HexCell[] cells;
@@ -52,6 +61,33 @@ public class HexGrid : MonoBehaviour
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
         cell.cordinate = HexCordinates.FromOffsetCordinate(x, z);
+        cell.color = defaultColor;
+
+
+        if(x > 0)
+        {
+            cell.SetNeighbour(HexDirection.W, cells[cellIndex - 1]);
+        }
+
+        if(z > 0)
+        {
+            if((z&1) == 0)
+            {
+                cell.SetNeighbour(HexDirection.SE, cells[cellIndex - width]);
+                if(x > 0)
+                {
+                    cell.SetNeighbour(HexDirection.SW, cells[cellIndex - width-1]);
+                }
+            }
+            else
+            {
+                cell.SetNeighbour(HexDirection.SW, cells[cellIndex - width]);
+                if(x < width - 1)
+                {
+                    cell.SetNeighbour(HexDirection.SE, cells[cellIndex - width + 1]);
+                }
+            }
+        }
 
         TextMeshProUGUI label = Instantiate(cellLabelPrefab);
 
@@ -61,30 +97,19 @@ public class HexGrid : MonoBehaviour
         label.text = cell.cordinate.ToStringOnSepararteLines();
     }
 
-    void Update()
-    {
-        if (Input.GetMouseButton(0))
-        {
-            HandleInput();
-        }
-    }
+    
 
-    void HandleInput()
-    {
-        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(inputRay, out hit))
-        {
-            TouchCell(hit.point);
-        }
-    }
-
-    void TouchCell(Vector3 position)
+    public void ColorCell(Vector3 position,Color color)
     {
         position = transform.InverseTransformPoint(position);
 
         HexCordinates cordinates = HexCordinates.FromPosition(position);
-        Debug.Log("touched at " + cordinates.ToString());
+        //Debug.Log("touched at " + cordinates.ToString());
+
+        int index = cordinates.X + cordinates.Z * width + cordinates.Z /2;
+        HexCell cell = cells[index];
+        cell.color = color;
+        hexMesh.Triangulate(cells);
     }
 
 }

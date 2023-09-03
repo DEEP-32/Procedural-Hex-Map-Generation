@@ -3,4 +3,19 @@ using UnityEngine;
 public class HexCell : MonoBehaviour
 {
     public HexCordinates cordinate;
+    public Color color;
+
+    [SerializeField]
+    HexCell[] neighbours;
+
+    public HexCell GetNeighbour(HexDirection direction)
+    {
+        return neighbours[(int)direction];
+    }
+
+    public void SetNeighbour(HexDirection direction, HexCell cell)
+    {
+        neighbours[(int)direction] = cell;
+        cell.neighbours[(int)direction.Opposite()] = this;
+    }
 }
