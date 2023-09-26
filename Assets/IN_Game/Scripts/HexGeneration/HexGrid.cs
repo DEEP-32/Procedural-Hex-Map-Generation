@@ -95,11 +95,13 @@ public class HexGrid : MonoBehaviour
         label.rectTransform.anchoredPosition = new Vector2(position.x,position.z);
 
         label.text = cell.cordinate.ToStringOnSepararteLines();
+
+        cell.uiRect = label.rectTransform;
     }
 
     
 
-    public void ColorCell(Vector3 position,Color color)
+    public HexCell GetCell(Vector3 position)
     {
         position = transform.InverseTransformPoint(position);
 
@@ -107,8 +109,11 @@ public class HexGrid : MonoBehaviour
         //Debug.Log("touched at " + cordinates.ToString());
 
         int index = cordinates.X + cordinates.Z * width + cordinates.Z /2;
-        HexCell cell = cells[index];
-        cell.color = color;
+        return cells[index];
+    }
+
+    public void Refresh()
+    {
         hexMesh.Triangulate(cells);
     }
 
