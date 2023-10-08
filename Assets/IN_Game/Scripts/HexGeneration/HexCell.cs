@@ -1,4 +1,5 @@
 using UnityEngine;
+using static HexMetrics;
 
 public class HexCell : MonoBehaviour
 {
@@ -39,5 +40,12 @@ public class HexCell : MonoBehaviour
         neighbours[(int)direction] = cell;
         cell.neighbours[(int)direction.Opposite()] = this;
     }
-   
+
+    public HexEdgeType GetEdgeType(HexDirection dir)
+    {
+        return HexMetrics.GetEdgeType(
+              elevation, neighbours[(int)dir].elevation
+            );
+    }
+
 }

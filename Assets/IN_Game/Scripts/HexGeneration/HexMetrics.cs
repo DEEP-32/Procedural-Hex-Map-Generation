@@ -1,7 +1,15 @@
 using UnityEngine;
 
+
+public enum HexEdgeType
+{
+    Flat, Slope, Cliff
+}
+
 public class HexMetrics : MonoBehaviour
 {
+    
+
     public const float elevationStep = 5f;
     public const float outerRadius = 10f;
     public const float innerRadius = outerRadius * 0.866025404f;
@@ -67,4 +75,22 @@ public class HexMetrics : MonoBehaviour
         float h = step * HexMetrics.horizontalTerraceStepSize;
         return Color.Lerp(a,b,h);
     }
+
+    public static HexEdgeType GetEdgeType(int elevation1,int elevation2)
+    {
+        if(elevation1 == elevation2)
+        {
+            return HexEdgeType.Flat;
+        }
+
+        int delta = elevation2 - elevation1;
+        if(Mathf.Abs(delta) == 1)
+        {
+            return HexEdgeType.Slope;
+        }
+
+        return HexEdgeType.Cliff;
+    }
+
+    
 }
